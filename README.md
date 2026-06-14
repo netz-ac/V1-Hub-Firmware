@@ -7,6 +7,8 @@ The hub uses a ATmega328 microcontroller with 7,372,800 Hz clock speed.
 For its input and output, it utilizes shift registers to control the locks and read their states.
 SN74AHC595 shift registers are used for output control, while SNx4HC166 shift registers are used for input reading.
 
+We also have a [Homeassistant Integration](https://github.com/netz-ac/hass-vecos-v1) for lock controllers running our firmware.
+
 ## Features
 - Control up to 16 Vecos V1 locks.
 - Read the state of each lock (open/closed).
