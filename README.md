@@ -50,7 +50,7 @@ The hub responds with 66 bits in 9 bytes:
    - Remaining bits are unused.
 
 ## How to Use
-1. Flash the firmware to the Vecos V1 Hub using PlatformIO and SPI (see below). Note: Use the optiboot bootloader, otherwise it will not boot.
+1. Flash the firmware to the Vecos V1 Hub using PlatformIO and SPI (see below). Note: Use the optiboot bootloader, otherwise it will not boot. Also for some boards, you may need to set the fuses to disable the watchdog timer.
 2. Connect the hardware as described in the **Hardware Setup** section.
 3. Use an RS485 communication interface to send commands to the hub.
 
@@ -67,6 +67,34 @@ To flash the firmware using SPI, disconnect the hub from power, open the hub and
 | GND            | 6      |
 
 Pin 1 is indicated on the PCB.
+### Fuses
+
+If you are using a board that has the watchdog timer enabled by default, you may need to disable it by setting the fuses. You will see whether your watchdog is enabled by the board rebooting shortly after the startup message and already using optiboot. You can do this using avrdude with the following command:
+
+```bash
+avrdude -c <programmer> -p m328 -U hfuse:w:0xxx:m
+```
+
+Reading the current fuse settings is also possible using avrdude:
+```bash
+avrdude -c <programmer> -p m328 -U hfuse:r:-:h
+```
+
+For us, we used the usbtiny programmer and had to set it to 0xd8 to disable the watchdog timer:
+
+```bash
+$ avrdude -c usbtiny -p m328 -P usb -U hfuse:r:-:h
+Reading hfuse memory ...
+Writing 1 byte to output file <stdout>
+0xc8
+
+Avrdude done.  Thank you.
+$ avrdude -c usbtiny -p m328 -P usb -U hfuse:w:0xd8:m
+Reading 1 byte for hfuse from input file 0xd8
+Writing 1 byte (0xD8) to hfuse, 1 byte written, 1 verified
+
+Avrdude done.  Thank you.
+```
 
 ## Notes
 - The firmware is designed for the Vecos V1 Hub and may not work with other hardware.
